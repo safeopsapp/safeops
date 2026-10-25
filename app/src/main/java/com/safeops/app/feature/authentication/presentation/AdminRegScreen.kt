@@ -68,6 +68,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.safeops.app.core.designsystem.component.SafeOpsAuthBackground
 import com.safeops.app.core.designsystem.component.SafeOpsButton
 import com.safeops.app.core.designsystem.component.SafeOpsCurvyHeroPattern
 import com.safeops.app.core.designsystem.component.SafeOpsDialog
@@ -98,34 +99,10 @@ fun AdminRegScreen(
     val typography = SafeOpsTheme.typography
     val scrollState = rememberScrollState()
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colors.background)
+    SafeOpsAuthBackground(
+        modifier = Modifier.fillMaxSize(),
+        isDark = colors.isDark
     ) {
-        // Full-page gradient backdrop
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    if (colors.isDark)
-                        Brush.verticalGradient(
-                            0.0f to Color(0xFF1E88E5).copy(alpha = 0.40f),
-                            0.20f to Color(0xFF0D47A1),
-                            0.50f to Color(0xFF06233F),
-                            1.0f to colors.background
-                        )
-                    else
-                        Brush.verticalGradient(
-                            0.0f to Color(0xFF38BDF8),
-                            0.18f to Color(0xFF1E88E5),
-                            0.40f to Color(0xFF0D47A1),
-                            0.70f to Color(0xFF062B66),
-                            1.0f to colors.background
-                        )
-                )
-        )
-
         Column(
             modifier = Modifier
                 .fillMaxSize()

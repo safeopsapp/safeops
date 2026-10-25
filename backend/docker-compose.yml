@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_DB: safeops_local
       POSTGRES_USER: safeops_local
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-safeops_local}
     ports:
       - "5432:5432"
     volumes:

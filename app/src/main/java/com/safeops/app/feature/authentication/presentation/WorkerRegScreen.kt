@@ -69,6 +69,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.safeops.app.core.designsystem.component.SafeOpsAuthBackground
 import com.safeops.app.core.designsystem.component.SafeOpsButton
 import com.safeops.app.core.designsystem.component.SafeOpsCurvyHeroPattern
 import com.safeops.app.core.designsystem.component.SafeOpsDialog
@@ -102,57 +103,17 @@ fun WorkerRegScreen(
     val colors = SafeOpsTheme.colors
     val scrollState = rememberScrollState()
 
-    BoxWithConstraints(
-        modifier = Modifier.fillMaxSize()
+    SafeOpsAuthBackground(
+        modifier = Modifier.fillMaxSize(),
+        isDark = colors.isDark
     ) {
-        val screenWidth = constraints.maxWidth.toFloat()
-        val screenHeight = constraints.maxHeight.toFloat()
-        val radius = if (screenHeight > 0f) screenHeight * 0.90f else 1800f
-
-        val headerGradient = if (colors.isDark) {
-            Brush.verticalGradient(
-                0.00f to Color(0xFF1E88E5), // Luminous light-blue accent at top
-                0.16f to Color(0xFF0D47A1), // Rich royal blue
-                0.46f to Color(0xFF08265E), // Deep cobalt navy
-                0.78f to Color(0xFF031336), // Dark midnight blue
-                1.00f to Color(0xFF010A1A)  // Darkest pure sapphire base
-            )
-        } else {
-            Brush.verticalGradient(
-                0.00f to Color(0xFF38BDF8), // Radiant light-blue accent at top
-                0.14f to Color(0xFF1E88E5), // Vibrant azure
-                0.38f to Color(0xFF0D47A1), // Deep royal blue
-                0.70f to Color(0xFF062B66), // Dark navy
-                1.00f to Color(0xFF020D22)  // Dark midnight blue base
-            )
-        }
-
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(headerGradient)
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .imePadding()
         ) {
-            // Luminous ambient top flare (smooth light-to-dark transition, zero patterns)
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(240.dp)
-                    .background(
-                        Brush.verticalGradient(
-                            0.0f to Color(0xFF38BDF8).copy(alpha = if (colors.isDark) 0.18f else 0.22f),
-                            0.5f to Color(0xFF1E88E5).copy(alpha = if (colors.isDark) 0.08f else 0.10f),
-                            1.0f to Color.Transparent
-                        )
-                    )
-            )
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .statusBarsPadding()
-                    .navigationBarsPadding()
-                    .imePadding()
-            ) {
                 // Top bar
                 WorkerRegTopBar(onNavigateBack = onNavigateBack)
 
@@ -207,7 +168,6 @@ fun WorkerRegScreen(
             )
         }
     }
-}
 }
 
 @Composable

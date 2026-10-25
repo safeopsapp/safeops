@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
@@ -101,5 +102,42 @@ fun SafeOpsGradientHeader(
             contentAlignment = Alignment.Center,
             content = content
         )
+    }
+}
+
+/**
+ * Common Product Auth & Registration Theme Background.
+ * Provides a unified visual flow across Login, Admin Registration, and Worker Registration:
+ * - Radiant light-blue accent at top (0xFF38BDF8 / 0xFF1E88E5)
+ * - Rich royal blue and deep cobalt in the center (0xFF0D47A1)
+ * - Dark midnight navy at bottom (0xFF020D22)
+ * - Subtle ambient light flare shining down from the top bar
+ */
+@Composable
+fun SafeOpsAuthBackground(
+    modifier: Modifier = Modifier,
+    isDark: Boolean = SafeOpsTheme.colors.isDark,
+    content: @Composable BoxScope.() -> Unit
+) {
+    val gradient = safeOpsMixedBlueGradient(isDark)
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(gradient)
+    ) {
+        // Luminous ambient top flare
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(260.dp)
+                .background(
+                    Brush.verticalGradient(
+                        0.0f to Color(0xFF38BDF8).copy(alpha = if (isDark) 0.18f else 0.22f),
+                        0.5f to Color(0xFF1E88E5).copy(alpha = if (isDark) 0.08f else 0.10f),
+                        1.0f to Color.Transparent
+                    )
+                )
+        )
+        content()
     }
 }
