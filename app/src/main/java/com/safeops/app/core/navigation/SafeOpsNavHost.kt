@@ -1,42 +1,18 @@
 package com.safeops.app.core.navigation
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.safeops.app.R
-import com.safeops.app.core.designsystem.theme.AccentOrange
-import com.safeops.app.core.designsystem.theme.SafeOpsTheme
 import com.safeops.app.di.AppContainer
 import com.safeops.app.di.SafeOpsViewModelFactory
 import com.safeops.app.domain.model.AuthenticatedSession
@@ -59,7 +35,6 @@ import com.safeops.app.feature.modules.presentation.NotificationsShell
 import com.safeops.app.feature.modules.presentation.PermitsShell
 import com.safeops.app.feature.modules.presentation.ProfileShell
 import com.safeops.app.feature.modules.presentation.ProjectsShell
-import com.safeops.app.feature.splash.presentation.SplashScreen
 
 @Composable
 fun SafeOpsNavHost(
@@ -67,12 +42,11 @@ fun SafeOpsNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController()
 ) {
-    var isSessionLoaded by remember { mutableStateOf(false) }
     var currentSession by remember { mutableStateOf<AuthenticatedSession?>(null) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // Direct session resolution without artificial delay or secondary click gate
+    // Direct session resolution into authenticated dashboard
     LaunchedEffect(Unit) {
         try {
             val session = container.sessionRepository.getCurrentSession()
@@ -84,46 +58,16 @@ fun SafeOpsNavHost(
                 }
             }
         } catch (_: Exception) {
-            // Unauthenticated: defaults to LoginScreen
-        } finally {
-            isSessionLoaded = true
+            // Unauthenticated: remains on LoginScreen
         }
     }
 
-    if (!isSessionLoaded) {
-        // Native-matching blue gradient launch view on app open
-        SafeOpsLaunchScreen()
-    } else {
-        NavHost(
-            navController = navController,
-            startDestination = Screen.Login.route,
-            modifier = modifier
-        ) {
-        // 1. Splash Route (Direct instant redirect without secondary loading screen)
-        composable(Screen.Splash.route) {
-            LaunchedEffect(Unit) {
-                try {
-                    val session = container.sessionRepository.getCurrentSession()
-                    if (session != null) {
-                        currentSession = session
-                        val route = container.resolveRoleNavigationUseCase(session)
-                        navController.navigate(route) {
-                            popUpTo(Screen.Splash.route) { inclusive = true }
-                        }
-                    } else {
-                        navController.navigate(Screen.Login.route) {
-                            popUpTo(Screen.Splash.route) { inclusive = true }
-                        }
-                    }
-                } catch (_: Exception) {
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.Splash.route) { inclusive = true }
-                    }
-                }
-            }
-        }
-
-        // 2. Login Screen
+    NavHost(
+        navController = navController,
+        startDestination = Screen.Login.route,
+        modifier = modifier
+    ) {
+        // 1. Login Screen
         composable(Screen.Login.route) {
             val loginViewModel: LoginViewModel = viewModel(
                 factory = SafeOpsViewModelFactory(container)
@@ -444,98 +388,6 @@ fun SafeOpsNavHost(
             ) {
                 ProfileShell(session = session)
             }
-        }
-    }
-}
-}
-
-/**
- * Clean native-matching launch view shown seamlessly during initial session lookup on app open.
- * Eliminates artificial secondary splash delays and click gates.
- */
-@Composable
-fun SafeOpsLaunchScreen(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(
-                Brush.radialGradient(
-                    colors = listOf(
-                        Color(0xFF0878FF),
-                        Color(0xFF063D9D),
-                        Color(0xFF031B45),
-                        Color(0xFF010B1E)
-                    ),
-                    radius = 1600f
-                )
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(108.dp)
-                    .clip(RoundedCornerShape(26.dp))
-                    .background(
-                        Brush.linearGradient(
-                            listOf(
-                                Color(0xFF0878FF),
-                                Color(0xFF063D9D)
-                            )
-                        )
-                    )
-                    .border(
-                        1.5.dp,
-                        Color(0xFF38BDF8).copy(alpha = 0.7f),
-                        RoundedCornerShape(26.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_safeops_logo),
-                    contentDescription = "SafeOps App Logo",
-                    modifier = Modifier.size(72.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "SAFE",
-                    style = SafeOpsTheme.typography.display.copy(
-                        color = Color.White,
-                        fontSize = 30.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        letterSpacing = 2.sp
-                    )
-                )
-                Text(
-                    text = "OPS",
-                    style = SafeOpsTheme.typography.display.copy(
-                        color = AccentOrange,
-                        fontSize = 30.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        letterSpacing = 2.sp
-                    )
-                )
-            }
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = "Construction Safety & Compliance",
-                style = SafeOpsTheme.typography.secondaryMedium.copy(
-                    color = Color.White.copy(alpha = 0.8f),
-                    fontSize = 12.sp,
-                    letterSpacing = 0.5.sp
-                )
-            )
         }
     }
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.SafeOps" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:windowBackground">@drawable/splash_window_background</item>
+        <item name="android:windowBackground">@color/white</item>
         <item name="android:statusBarColor">#0D47C9</item>
         <item name="android:navigationBarColor">#0B1F4D</item>
     </style>

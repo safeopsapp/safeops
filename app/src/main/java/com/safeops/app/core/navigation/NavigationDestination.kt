@@ -9,8 +9,6 @@ import com.safeops.app.domain.model.Role
  * Type-safe centralized Navigation Destinations.
  */
 sealed class Screen(val route: String) {
-    data object Splash : Screen("splash")
-    data object AuthCheck : Screen("auth_check")
     data object Login : Screen("login")
     data object AdminRegister : Screen("register/admin")
     data object WorkerRegister : Screen("register/worker")
