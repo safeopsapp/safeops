@@ -1,0 +1,35 @@
+# Maven
+target/
+*.class
+
+# Environment files - NEVER commit these
+.env
+.env.local
+.env.production
+.env.*.local
+
+# Credential files - NEVER commit these
+*.pem
+*.key
+*.jks
+*.p12
+service-account*.json
+firebase-admin*.json
+google-credentials*.json
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Spring Boot
+application-local-*.yml

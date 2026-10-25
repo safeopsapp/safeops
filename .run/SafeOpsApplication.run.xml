@@ -1,0 +1,22 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="SafeOpsApplication (Local)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="backend" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.safeops.SafeOpsApplication" />
+    <option name="ACTIVE_PROFILES" value="local" />
+    <option name="VM_PARAMETERS" value="-Dspring.profiles.active=local -XX:+EnableDynamicAgentLoading" />
+    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/backend" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+  <configuration default="false" name="SafeOpsApplication (Application)" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.safeops.SafeOpsApplication" />
+    <module name="backend" />
+    <option name="VM_PARAMETERS" value="-Dspring.profiles.active=local -XX:+EnableDynamicAgentLoading" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/backend" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
+

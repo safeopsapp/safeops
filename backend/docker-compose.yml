@@ -1,0 +1,27 @@
+# SafeOps Local Development - PostgreSQL only
+# Do NOT add AWS RDS or production infrastructure here
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: safeops-postgres-local
+    environment:
+      POSTGRES_DB: safeops_local
+      POSTGRES_USER: safeops_local
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - safeops_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U safeops_local -d safeops_local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+
+volumes:
+  safeops_postgres_data:
+    driver: local

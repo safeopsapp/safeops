@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "733359285051",
+    "project_id": "safeops-eb09e",
+    "storage_bucket": "safeops-eb09e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:733359285051:android:766881ffd69347cb8e0d1e",
+        "android_client_info": {
+          "package_name": "com.safeops.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "733359285051-b2jdu7d90o0t15i5dk2d7iifiidpoqgp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBni2KgSt60xIRmdbydrcqx2EthKhVLYA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "733359285051-b2jdu7d90o0t15i5dk2d7iifiidpoqgp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

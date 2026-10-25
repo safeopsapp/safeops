@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Production Secure Configuration (Default): Enforces strict TLS -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <!-- Development Domain Exceptions: Allows cleartext HTTP for local Spring Boot backend -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">10.0.2.2</domain>
+        <domain includeSubdomains="true">localhost</domain>
+        <domain includeSubdomains="true">127.0.0.1</domain>
+        <domain includeSubdomains="true">192.168.1.1</domain>
+        <domain includeSubdomains="true">192.168.0.1</domain>
+    </domain-config>
+
+    <!-- Production Domains: Strictly Enforces HTTPS and system certificate verification -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">api.safeops.app</domain>
+        <domain includeSubdomains="true">dev-api.safeops.app</domain>
+        <domain includeSubdomains="true">staging-api.safeops.app</domain>
+        <domain includeSubdomains="true">firebaseapp.com</domain>
+        <domain includeSubdomains="true">googleapis.com</domain>
+    </domain-config>
+</network-security-config>
+

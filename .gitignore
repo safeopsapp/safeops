@@ -1,0 +1,31 @@
+*.iml
+.gradle/
+**/build/
+build/
+/local.properties
+local.properties
+.idea/
+.DS_Store
+/captures
+.externalNativeBuild
+.cxx
+
+# Backend
+backend/target/
+**/target/
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# Environment & Credentials - NEVER commit these
+.env
+.env.local
+.env.production
+.env.*.local
+*.pem
+*.key
+*.jks
+*.p12
+service-account*.json
+firebase-admin*.json
+google-credentials*.json

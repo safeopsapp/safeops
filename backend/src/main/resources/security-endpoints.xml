@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    SafeOps Enterprise Security Access Policy & Endpoint Registry
+    Defines strict separation between Authenticated and Unauthenticated API operations.
+-->
+<safeops-security-policy version="1.0.0">
+
+    <!-- =================================================================== -->
+    <!-- UNAUTHENTICATED ENDPOINTS (Public Access - No Bearer Token Required)-->
+    <!-- =================================================================== -->
+    <unauthenticated-endpoints>
+
+        <endpoint>
+            <path>/api/v1/auth/referral/{code}</path>
+            <method>GET</method>
+            <access-level>PUBLIC</access-level>
+            <description>Lookup organization verification details by immutable referral code during staff sign-up.</description>
+            <rate-limit>60 requests/minute</rate-limit>
+            <audit-log>false</audit-log>
+        </endpoint>
+
+        <endpoint>
+            <path>/api/v1/auth/register-admin</path>
+            <method>POST</method>
+            <access-level>PUBLIC_WITH_FIREBASE_TOKEN</access-level>
+            <description>Bootstrap onboarding for organization administrators. Creates Customer, Organization, and Admin User.</description>
+            <rate-limit>10 requests/minute</rate-limit>
+            <audit-log>true</audit-log>
+        </endpoint>
+
+        <endpoint>
+            <path>/api/v1/auth/register-staff</path>
+            <method>POST</method>
+            <access-level>PUBLIC_WITH_FIREBASE_TOKEN</access-level>
+            <description>Register field worker or site engineer under an organization using a valid referral code in PENDING status.</description>
+            <rate-limit>20 requests/minute</rate-limit>
+            <audit-log>true</audit-log>
+        </endpoint>
+
+        <endpoint>
+            <path>/actuator/health</path>
+            <method>GET</method>
+            <access-level>PUBLIC</access-level>
+            <description>System liveness and readiness probe for load balancers and deployment verification.</description>
+            <rate-limit>unlimited</rate-limit>
+            <audit-log>false</audit-log>
+        </endpoint>
+
+        <endpoint>
+            <path>/actuator/info</path>
+            <method>GET</method>
+            <access-level>PUBLIC</access-level>
+            <description>Application version and build metadata.</description>
+            <rate-limit>unlimited</rate-limit>
+            <audit-log>false</audit-log>
+        </endpoint>
+
+        <endpoint>
+            <path>/v3/api-docs/**</path>
+            <method>GET</method>
+            <access-level>PUBLIC_LOCAL_ONLY</access-level>
+            <description>OpenAPI v3 JSON specification (disabled in production).</description>
+            <rate-limit>unlimited</rate-limit>
+            <audit-log>false</audit-log>
+        </endpoint>
+
+        <endpoint>
+            <path>/swagger-ui/**</path>
+            <method>GET</method>
+            <access-level>PUBLIC_LOCAL_ONLY</access-level>
+            <description>Swagger UI documentation console (disabled in production).</description>
+            <rate-limit>unlimited</rate-limit>
+            <audit-log>false</audit-log>
+        </endpoint>
+
+        <endpoint>
+            <path>/api/v1/payments/webhook</path>
+            <method>POST</method>
+            <access-level>PUBLIC_WITH_HMAC_SIGNATURE</access-level>
+            <description>Asynchronous payment gateway webhook endpoint verified via cryptographic HMAC-SHA256 signature.</description>
+            <rate-limit>120 requests/minute</rate-limit>
+            <audit-log>true</audit-log>
+        </endpoint>
+
+    </unauthenticated-endpoints>
+
+    <!-- =================================================================== -->
+    <!-- AUTHENTICATED ENDPOINTS (Protected - Strict Bearer Token Required)  -->
+    <!-- =================================================================== -->
+    <authenticated-endpoints>
+
+        <!-- Authentication & Identity -->
+        <endpoint>
+            <path>/api/v1/auth/me</path>
+            <method>GET</method>
+            <required-status>ACTIVE</required-status>
+            <roles-allowed>ADMIN, SAFETY_OFFICER, ENGINEER, WORKER</roles-allowed>
+            <description>Resolve current user identity, organization context, project assignments, roles, and granular permissions.</description>
+            <tenant-isolation>Scoped to principal's customer and organizations</tenant-isolation>
+            <audit-log>false</audit-log>
+        </endpoint>
+
+        <endpoint>
+            <path>/api/v1/auth/sync</path>
+            <method>POST</method>
+            <required-status>ACTIVE</required-status>
+            <roles-allowed>ADMIN, SAFETY_OFFICER, ENGINEER, WORKER</roles-allowed>
+            <description>Synchronize profile and session data for registered and verified users.</description>
+            <tenant-isolation>Scoped to authenticated Firebase UID</tenant-isolation>
+            <audit-log>true</audit-log>
+        </endpoint>
+
+        <!-- Organization Membership Governance -->
+        <endpoint>
+            <path>/api/v1/auth/organizations/{orgId}/memberships/pending</path>
+            <method>GET</method>
+            <required-status>ACTIVE</required-status>
+            <roles-allowed>ADMIN</roles-allowed>
+            <permission>MEMBERSHIP_READ</permission>
+            <description>Retrieve all pending worker and staff registrations awaiting organization administrator approval.</description>
+            <tenant-isolation>Scoped to target orgId where admin holds active membership</tenant-isolation>
+            <audit-log>false</audit-log>
+        </endpoint>
+
+        <endpoint>
+            <path>/api/v1/auth/organizations/{orgId}/memberships/{membershipId}/approve</path>
+            <method>PUT</method>
+            <required-status>ACTIVE</required-status>
+            <roles-allowed>ADMIN</roles-allowed>
+            <permission>MEMBERSHIP_MANAGE</permission>
+            <description>Approve a pending staff membership, activating user account and granting organization safety access.</description>
+            <tenant-isolation>Cross-tenant validation verified</tenant-isolation>
+            <audit-log>true</audit-log>
+        </endpoint>
+
+        <endpoint>
+            <path>/api/v1/auth/organizations/{orgId}/memberships/{membershipId}/reject</path>
+            <method>PUT</method>
+            <required-status>ACTIVE</required-status>
+            <roles-allowed>ADMIN</roles-allowed>
+            <permission>MEMBERSHIP_MANAGE</permission>
+            <description>Reject a staff registration, disabling membership access.</description>
+            <tenant-isolation>Cross-tenant validation verified</tenant-isolation>
+            <audit-log>true</audit-log>
+        </endpoint>
+
+        <!-- Project & Site Hierarchy Management -->
+        <endpoint>
+            <path>/api/v1/projects/**</path>
+            <method>ALL</method>
+            <required-status>ACTIVE</required-status>
+            <roles-allowed>ADMIN, SAFETY_OFFICER, ENGINEER</roles-allowed>
+            <permission>PROJECT_READ, PROJECT_MANAGE</permission>
+            <description>Manage construction projects, scope boundaries, and safety configurations.</description>
+            <tenant-isolation>Filtered by organization_id</tenant-isolation>
+            <audit-log>true</audit-log>
+        </endpoint>
+
+        <endpoint>
+            <path>/api/v1/sites/**</path>
+            <method>ALL</method>
+            <required-status>ACTIVE</required-status>
+            <roles-allowed>ADMIN, SAFETY_OFFICER, ENGINEER, WORKER</roles-allowed>
+            <permission>SITE_READ, SITE_MANAGE</permission>
+            <description>Manage construction physical zones, work packages, and site coordinates.</description>
+            <tenant-isolation>Filtered by project_id and organization_id</tenant-isolation>
+            <audit-log>true</audit-log>
+        </endpoint>
+
+        <!-- Permit to Work (PTW) Compliance Module -->
+        <endpoint>
+            <path>/api/v1/permits</path>
+            <method>GET</method>
+            <required-status>ACTIVE</required-status>
+            <roles-allowed>ADMIN, SAFETY_OFFICER, ENGINEER, WORKER</roles-allowed>
+            <permission>PERMIT_READ</permission>
+            <description>Query active and historical PTW safety permits.</description>
+            <tenant-isolation>Scoped to user's assigned site/project</tenant-isolation>
+            <audit-log>false</audit-log>
+        </endpoint>
+
+        <endpoint>
+            <path>/api/v1/permits</path>
+            <method>POST</method>
+            <required-status>ACTIVE</required-status>
+            <roles-allowed>ADMIN, SAFETY_OFFICER, ENGINEER, WORKER</roles-allowed>
+            <permission>PERMIT_CREATE</permission>
+            <description>Submit high-risk work permit application (Hot Work, Confined Space, Working at Heights).</description>
+            <tenant-isolation>Bound to verified site_id within tenant</tenant-isolation>
+            <audit-log>true</audit-log>
+        </endpoint>
+
+        <endpoint>
+            <path>/api/v1/permits/{id}/approve</path>
+            <method>PUT</method>
+            <required-status>ACTIVE</required-status>
+            <roles-allowed>SAFETY_OFFICER, ADMIN</roles-allowed>
+            <permission>PERMIT_APPROVE</permission>
+            <description>Authorize work permit following multi-point safety checklist verification.</description>
+            <tenant-isolation>Scoped to authorized safety officer site assignment</tenant-isolation>
+            <audit-log>true</audit-log>
+        </endpoint>
+
+        <!-- Payments & Subscription Tier Management -->
+        <endpoint>
+            <path>/api/v1/payments/order</path>
+            <method>POST</method>
+            <required-status>ACTIVE</required-status>
+            <roles-allowed>ADMIN</roles-allowed>
+            <permission>BILLING_MANAGE</permission>
+            <description>Create payment checkout order for organization safety subscription licenses.</description>
+            <tenant-isolation>Scoped to customer_id</tenant-isolation>
+            <audit-log>true</audit-log>
+        </endpoint>
+
+        <endpoint>
+            <path>/api/v1/payments/verify</path>
+            <method>POST</method>
+            <required-status>ACTIVE</required-status>
+            <roles-allowed>ADMIN</roles-allowed>
+            <permission>BILLING_MANAGE</permission>
+            <description>Verify client payment confirmation signature and activate organization features.</description>
+            <tenant-isolation>Scoped to transaction reference and customer_id</tenant-isolation>
+            <audit-log>true</audit-log>
+        </endpoint>
+
+        <endpoint>
+            <path>/api/v1/payments/history</path>
+            <method>GET</method>
+            <required-status>ACTIVE</required-status>
+            <roles-allowed>ADMIN</roles-allowed>
+            <permission>BILLING_READ</permission>
+            <description>Query tax invoices, payment receipts, and billing audit logs.</description>
+            <tenant-isolation>Scoped to organization_id</tenant-isolation>
+            <audit-log>false</audit-log>
+        </endpoint>
+
+    </authenticated-endpoints>
+
+</safeops-security-policy>
+
