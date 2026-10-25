@@ -68,6 +68,27 @@ class LoginUseCase(
     }
 }
 
+class LoginWithGoogleUseCase(
+    private val authRepository: AuthRepository,
+    private val sessionRepository: SessionRepository
+) {
+    suspend operator fun invoke(
+        googleIdToken: String,
+        selectedRole: Role
+    ): Result<AuthenticatedSession> {
+        val loginResult = authRepository.loginWithGoogle(
+            googleIdToken = googleIdToken,
+            selectedRole = selectedRole
+        )
+
+        if (loginResult is Result.Success) {
+            sessionRepository.saveSession(loginResult.data)
+        }
+
+        return loginResult
+    }
+}
+
 class GetSessionUseCase(
     private val sessionRepository: SessionRepository
 ) {
@@ -88,7 +109,7 @@ class LogoutUseCase(
 
 class ResolveRoleNavigationUseCase {
     operator fun invoke(session: AuthenticatedSession?): String {
-        if (session == null) return "auth/login"
+        if (session == null) return "login"
         return when (session.role) {
             Role.ADMIN -> "dashboard/admin"
             Role.ENGINEER -> "dashboard/engineer"

@@ -124,9 +124,9 @@ fun SafeOpsNavHost(
 
         // 3. Admin Dashboard
         composable(Screen.AdminDashboard.route) {
-            val defaultOrg = com.safeops.app.domain.model.Organization("ORG-01", "Sairam Construction Pvt Ltd", "SCPL")
+            val defaultOrg = com.safeops.app.domain.model.Organization("ORG-01", "Apex Infrastructure Ltd", "SCPL")
             val session = currentSession ?: AuthenticatedSession(
-                user = com.safeops.app.domain.model.User("ADM-001", "vasanthan@safeops.com", "Vasanthan M", com.safeops.app.domain.model.Role.ADMIN, organizationId = "ORG-01"),
+                user = com.safeops.app.domain.model.User("ADM-001", "alex.morgan@safeops.com", "Alex Morgan", com.safeops.app.domain.model.Role.ADMIN, organizationId = "ORG-01"),
                 organization = defaultOrg,
                 role = com.safeops.app.domain.model.Role.ADMIN,
                 currentProject = null,
@@ -150,9 +150,9 @@ fun SafeOpsNavHost(
 
         // 4. Engineer Dashboard
         composable(Screen.EngineerDashboard.route) {
-            val defaultOrg = com.safeops.app.domain.model.Organization("ORG-01", "Sairam Construction Pvt Ltd", "SCPL")
+            val defaultOrg = com.safeops.app.domain.model.Organization("ORG-01", "Apex Infrastructure Ltd", "SCPL")
             val session = currentSession ?: AuthenticatedSession(
-                user = com.safeops.app.domain.model.User("ENG-104", "vasanthan.eng@safeops.com", "Vasanthan M", com.safeops.app.domain.model.Role.ENGINEER, organizationId = "ORG-01"),
+                user = com.safeops.app.domain.model.User("ENG-104", "marcus.vance@safeops.com", "Marcus Vance", com.safeops.app.domain.model.Role.ENGINEER, organizationId = "ORG-01"),
                 organization = defaultOrg,
                 role = com.safeops.app.domain.model.Role.ENGINEER,
                 currentProject = null,
@@ -176,7 +176,7 @@ fun SafeOpsNavHost(
 
         // 5. Worker Dashboard
         composable(Screen.WorkerDashboard.route) {
-            val defaultOrg = com.safeops.app.domain.model.Organization("ORG-01", "Sairam Construction Pvt Ltd", "SCPL")
+            val defaultOrg = com.safeops.app.domain.model.Organization("ORG-01", "Apex Infrastructure Ltd", "SCPL")
             val session = currentSession ?: AuthenticatedSession(
                 user = com.safeops.app.domain.model.User("WRK-512", "ramesh@safeops.com", "Ramesh Kumar", com.safeops.app.domain.model.Role.WORKER, organizationId = "ORG-01"),
                 organization = defaultOrg,
@@ -202,7 +202,7 @@ fun SafeOpsNavHost(
 
         // 6. Safety Officer Dashboard
         composable(Screen.SafetyOfficerDashboard.route) {
-            val defaultOrg = com.safeops.app.domain.model.Organization("ORG-01", "Sairam Construction Pvt Ltd", "SCPL")
+            val defaultOrg = com.safeops.app.domain.model.Organization("ORG-01", "Apex Infrastructure Ltd", "SCPL")
             val session = currentSession ?: AuthenticatedSession(
                 user = com.safeops.app.domain.model.User("EHS-209", "shankar@safeops.com", "S. Shankar", com.safeops.app.domain.model.Role.SAFETY_OFFICER, organizationId = "ORG-01"),
                 organization = defaultOrg,
@@ -226,9 +226,9 @@ fun SafeOpsNavHost(
             )
         }
 
-        val defaultOrg = com.safeops.app.domain.model.Organization("ORG-01", "Sairam Construction Pvt Ltd", "SCPL")
+        val defaultOrg = com.safeops.app.domain.model.Organization("ORG-01", "Apex Infrastructure Ltd", "SCPL")
         val fallbackSession = AuthenticatedSession(
-            user = com.safeops.app.domain.model.User("ENG-104", "vasanthan.eng@safeops.com", "Vasanthan M", com.safeops.app.domain.model.Role.ENGINEER, organizationId = "ORG-01"),
+            user = com.safeops.app.domain.model.User("ENG-104", "marcus.vance@safeops.com", "Marcus Vance", com.safeops.app.domain.model.Role.ENGINEER, organizationId = "ORG-01"),
             organization = defaultOrg,
             role = com.safeops.app.domain.model.Role.ENGINEER,
             currentProject = null,

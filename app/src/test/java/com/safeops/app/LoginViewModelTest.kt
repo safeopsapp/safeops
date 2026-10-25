@@ -56,6 +56,24 @@ class LoginViewModelTest {
             return Result.Success(session)
         }
 
+        override suspend fun loginWithGoogle(
+            googleIdToken: String,
+            selectedRole: Role
+        ): Result<AuthenticatedSession> {
+            val user = User("u1", "google@safeops.app", "Google User", selectedRole, null, null, "org1")
+            val org = Organization("org1", "Test Org", "TORG", 2)
+            val session = AuthenticatedSession(
+                user = user,
+                organization = org,
+                role = selectedRole,
+                currentProject = null,
+                permissions = Permission.defaultPermissionsForRole(selectedRole),
+                accessToken = "test_google_token",
+                expiresAt = System.currentTimeMillis() + 3600000
+            )
+            return Result.Success(session)
+        }
+
         override suspend fun logout(): Result<Unit> = Result.Success(Unit)
     }
 
@@ -88,8 +106,13 @@ class LoginViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
+        val loginWithGoogleUseCase = com.safeops.app.domain.usecase.LoginWithGoogleUseCase(
+            authRepository = fakeAuthRepository,
+            sessionRepository = fakeSessionRepository
+        )
         viewModel = LoginViewModel(
             loginUseCase = loginUseCase,
+            loginWithGoogleUseCase = loginWithGoogleUseCase,
             validateCredentialsUseCase = validateCredentialsUseCase,
             userPreferencesDataSource = fakePreferencesDataSource
         )
@@ -128,5 +151,14 @@ class LoginViewModelTest {
         advanceUntilIdle()
         assertNotNull(viewModel.uiState.value.successSession)
         assertEquals("engineer@safeops.app", viewModel.uiState.value.successSession?.user?.email)
+    }
+
+    @Test
+    fun `Google sign in succeeds and updates state with authenticated session`() = runTest {
+        viewModel.onEvent(LoginEvent.GoogleSignIn("mock_google_id_token"))
+
+        advanceUntilIdle()
+        assertNotNull(viewModel.uiState.value.successSession)
+        assertEquals("google@safeops.app", viewModel.uiState.value.successSession?.user?.email)
     }
 }

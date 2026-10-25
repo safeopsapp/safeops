@@ -15,6 +15,11 @@ interface AuthRepository {
         rememberMe: Boolean
     ): Result<AuthenticatedSession>
 
+    suspend fun loginWithGoogle(
+        googleIdToken: String,
+        selectedRole: Role
+    ): Result<AuthenticatedSession>
+
     suspend fun logout(): Result<Unit>
 }
 

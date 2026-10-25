@@ -15,6 +15,7 @@ coroutines = "1.9.0"
 serializationJson = "1.7.3"
 turbine = "1.2.0"
 firebaseBom = "33.7.0"
+playServicesAuth = "21.3.0"
 okhttp = "4.12.0"
 googleServices = "4.4.2"
 
@@ -46,6 +47,7 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
+play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 

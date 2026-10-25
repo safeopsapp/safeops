@@ -180,7 +180,7 @@ private fun WorkerAssignedWorkCard(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "Shift Duration: 09:00 AM – 06:00 PM\nSupervised by: Vasanthan M (Engineer)",
+                    text = "Shift Duration: 09:00 AM – 06:00 PM\nSupervised by: Marcus Vance (Engineer)",
                     fontSize = 11.5.sp,
                     color = if (isDark) Color(0xFFCAD6E8) else Color(0xFF475569),
                     lineHeight = 16.sp

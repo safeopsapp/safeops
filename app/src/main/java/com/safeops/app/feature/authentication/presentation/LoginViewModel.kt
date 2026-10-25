@@ -7,6 +7,7 @@ import com.safeops.app.core.datastore.UserPreferencesDataSource
 import com.safeops.app.core.error.ErrorMapper
 import com.safeops.app.domain.model.Role
 import com.safeops.app.domain.usecase.LoginUseCase
+import com.safeops.app.domain.usecase.LoginWithGoogleUseCase
 import com.safeops.app.domain.usecase.ValidateCredentialsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +18,7 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel(
     private val loginUseCase: LoginUseCase,
+    private val loginWithGoogleUseCase: LoginWithGoogleUseCase? = null,
     private val validateCredentialsUseCase: ValidateCredentialsUseCase,
     private val userPreferencesDataSource: UserPreferencesDataSource
 ) : ViewModel() {
@@ -63,8 +65,50 @@ class LoginViewModel(
                 _uiState.update { it.copy(rememberMe = !it.rememberMe) }
             }
             is LoginEvent.Submit -> performSignIn()
+            is LoginEvent.GoogleSignIn -> performGoogleSignIn(event.idToken)
+            is LoginEvent.GoogleSignInFailed -> {
+                _uiState.update { it.copy(isLoading = false, errorMessage = event.message) }
+            }
             is LoginEvent.DismissError -> {
                 _uiState.update { it.copy(errorMessage = null) }
+            }
+        }
+    }
+
+    private fun performGoogleSignIn(googleIdToken: String) {
+        val googleUseCase = loginWithGoogleUseCase
+        if (googleUseCase == null) {
+            _uiState.update { it.copy(isLoading = false, errorMessage = "Google Sign-In is not configured.") }
+            return
+        }
+
+        val state = _uiState.value
+        _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+
+        viewModelScope.launch {
+            val domainRole = when (state.selectedLoginRole) {
+                LoginRole.ADMIN -> Role.ADMIN
+                LoginRole.STAFF -> Role.WORKER
+            }
+
+            val result = googleUseCase(
+                googleIdToken = googleIdToken,
+                selectedRole = domainRole
+            )
+
+            when (result) {
+                is Result.Success -> {
+                    _uiState.update {
+                        it.copy(isLoading = false, successSession = result.data)
+                    }
+                }
+                is Result.Error -> {
+                    val message = ErrorMapper.getUserFriendlyMessage(result.error)
+                    _uiState.update { it.copy(isLoading = false, errorMessage = message) }
+                }
+                is Result.Loading -> {
+                    _uiState.update { it.copy(isLoading = true) }
+                }
             }
         }
     }

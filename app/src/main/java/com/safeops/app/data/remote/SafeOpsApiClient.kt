@@ -80,6 +80,12 @@ open class SafeOpsApiClient(
             if (!response.isSuccessful) {
                 throw IOException("Backend auth failed with HTTP ${response.code}: $bodyString")
             }
+            try {
+                val wrapped = json.decodeFromString<com.safeops.app.data.remote.dto.ApiResponseDto<AuthMeDto>>(bodyString)
+                if (wrapped.data != null) {
+                    return@withContext wrapped.data
+                }
+            } catch (_: Exception) {}
             json.decodeFromString<AuthMeDto>(bodyString)
         }
     }

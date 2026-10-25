@@ -108,8 +108,8 @@ class RegistrationViewModelsTest {
     @Test
     fun `Admin registration progresses through all 4 steps successfully`() = runTest {
         // Step 1: Admin Details
-        adminViewModel.onEvent(AdminRegEvent.FullNameChanged("Vasanthan M"))
-        adminViewModel.onEvent(AdminRegEvent.EmailChanged("vasanthan@safeops.app"))
+        adminViewModel.onEvent(AdminRegEvent.FullNameChanged("Alex Morgan"))
+        adminViewModel.onEvent(AdminRegEvent.EmailChanged("alex.morgan@safeops.app"))
         adminViewModel.onEvent(AdminRegEvent.PasswordChanged("SecurePass123!"))
         adminViewModel.onEvent(AdminRegEvent.ConfirmPasswordChanged("SecurePass123!"))
         adminViewModel.onEvent(AdminRegEvent.PhoneNumberChanged("+919876543210"))

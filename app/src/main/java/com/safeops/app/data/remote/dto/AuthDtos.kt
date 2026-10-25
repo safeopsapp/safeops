@@ -3,7 +3,16 @@ package com.safeops.app.data.remote.dto
 import kotlinx.serialization.Serializable
 
 @Serializable
+data class ApiResponseDto<T>(
+    val success: Boolean = false,
+    val message: String? = null,
+    val data: T? = null,
+    val error: String? = null
+)
+
+@Serializable
 data class AuthMeDto(
+    val userId: String? = null,
     val id: String? = null,
     val firebaseUid: String? = null,
     val email: String? = null,
@@ -15,32 +24,43 @@ data class AuthMeDto(
     val sites: List<SiteSummaryDto> = emptyList(),
     val roles: Set<String> = emptySet(),
     val permissions: Set<String> = emptySet()
-)
+) {
+    val effectiveId: String get() = id ?: userId ?: firebaseUid ?: ""
+}
 
 @Serializable
 data class OrgSummaryDto(
-    val id: String,
-    val name: String,
-    val slug: String,
+    val organizationId: String? = null,
+    val id: String? = null,
+    val name: String = "",
+    val slug: String? = null,
     val role: String? = null
-)
+) {
+    val effectiveId: String get() = id ?: organizationId ?: ""
+}
 
 @Serializable
 data class ProjectSummaryDto(
-    val id: String,
-    val organizationId: String,
-    val name: String,
-    val code: String,
+    val projectId: String? = null,
+    val id: String? = null,
+    val organizationId: String? = null,
+    val name: String = "",
+    val code: String? = null,
     val role: String? = null
-)
+) {
+    val effectiveId: String get() = id ?: projectId ?: ""
+}
 
 @Serializable
 data class SiteSummaryDto(
-    val id: String,
-    val projectId: String,
-    val name: String,
-    val code: String
-)
+    val siteId: String? = null,
+    val id: String? = null,
+    val projectId: String? = null,
+    val name: String = "",
+    val code: String? = null
+) {
+    val effectiveId: String get() = id ?: siteId ?: ""
+}
 
 @Serializable
 data class ReferralCodeDto(

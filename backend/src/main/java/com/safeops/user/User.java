@@ -57,6 +57,7 @@ public class User extends Auditable {
     }
 
     public String getFirebaseUid() { return firebaseUid; }
+    public void setFirebaseUid(String firebaseUid) { this.firebaseUid = firebaseUid; }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
     public String getDisplayName() { return displayName; }

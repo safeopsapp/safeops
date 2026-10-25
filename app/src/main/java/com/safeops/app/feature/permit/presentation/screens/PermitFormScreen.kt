@@ -384,7 +384,7 @@ private fun Step1ApplicationSection(
                 )
                 SafeOpsPermitDropdown(
                     selectedOption = permit.header.workPerformedBy,
-                    options = listOf("Sairam Civil Infrastructure Ltd", "Apex Structural Welders", "Heavy Cranes South India", "HighRise Scaffolding Services"),
+                    options = listOf("Apex Civil Infrastructure Ltd", "Apex Structural Welders", "Heavy Cranes South India", "HighRise Scaffolding Services"),
                     onOptionSelected = { onUpdate(permit.copy(header = permit.header.copy(workPerformedBy = it))) },
                     label = "Work Performed By (Contractor)",
                     isRequired = true

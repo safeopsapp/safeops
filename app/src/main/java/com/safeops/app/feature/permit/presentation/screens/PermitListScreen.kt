@@ -538,7 +538,7 @@ private fun PermitListItemCard(
                     color = if (isDark) Color(0xFFA6A3AA) else Color(0xFF77767E)
                 )
                 Text(
-                    text = "Created by: ${permit.createdByName.ifBlank { "Vasanthan M" }}",
+                    text = "Created by: ${permit.createdByName.ifBlank { "Marcus Vance" }}",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(0xFF0878FF)

@@ -22,6 +22,8 @@ sealed interface LoginEvent {
     data class SelectLoginRole(val role: LoginRole) : LoginEvent
     data object ToggleRememberMe : LoginEvent
     data object Submit : LoginEvent
+    data class GoogleSignIn(val idToken: String) : LoginEvent
+    data class GoogleSignInFailed(val message: String) : LoginEvent
     data object DismissError : LoginEvent
 }
 

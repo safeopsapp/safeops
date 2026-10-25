@@ -96,7 +96,7 @@ fun CreateInspectionScreen(
 
     // Form Fields
     var inspectionCategory by remember { mutableStateOf("Daily Site Safety Walkthrough") }
-    var workFront by remember { mutableStateOf("Sairam Metro Station 4 - Track Deck") }
+    var workFront by remember { mutableStateOf("Apex Metro Station 4 - Track Deck") }
     var leadInspector by remember { mutableStateOf(session.user.fullName) }
     var inspectionDate by remember { mutableStateOf("03 Oct 2026") }
     var shiftName by remember { mutableStateOf("Day Shift (08:00 - 17:00)") }
@@ -132,7 +132,7 @@ fun CreateInspectionScreen(
         mutableStateListOf(
             InspectionRecord("INS-2026-442", "Daily Site Safety Walkthrough", "Safety Walk", "86%", session.user.fullName, "Pending Rectification", "Today"),
             InspectionRecord("INS-2026-441", "Scaffolding & Work at Height Audit", "Scaffolding", "94%", "S. Shankar (EHS)", "Compliant", "Yesterday"),
-            InspectionRecord("INS-2026-440", "Tower Crane Pre-Operation Inspection", "Heavy Plant", "100%", "Vasanthan M", "Compliant", "01 Oct"),
+            InspectionRecord("INS-2026-440", "Tower Crane Pre-Operation Inspection", "Heavy Plant", "100%", "Marcus Vance", "Compliant", "01 Oct"),
             InspectionRecord("INS-2026-439", "Basement Dewatering & Trenching", "Excavation", "91%", "S. Shankar (EHS)", "Compliant", "30 Sep")
         )
     }
@@ -324,7 +324,7 @@ fun CreateInspectionScreen(
                         value = workFront,
                         onValueChange = { workFront = it },
                         label = "Site Location & Work Front *",
-                        placeholder = "e.g., Sairam Metro Station 4 - Track Deck",
+                        placeholder = "e.g., Apex Metro Station 4 - Track Deck",
                         leadingIcon = SafeOpsIcons.Projects
                     )
 

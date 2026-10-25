@@ -69,17 +69,30 @@ public class AuthService {
         this.rolePermissionRepository = rolePermissionRepository;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public SafeOpsPrincipal buildPrincipal(FirebaseToken firebaseToken) {
         String firebaseUid = firebaseToken.getUid();
 
         User user = userRepository.findByFirebaseUid(firebaseUid)
-            .orElseThrow(() -> {
-                log.warn("No SafeOps user found for firebaseUid={}", firebaseUid);
-                return new FirebaseAuthenticationException(
-                    "User not registered in SafeOps. Please complete registration."
-                );
+            .orElseGet(() -> {
+                if (firebaseToken.getEmail() != null && !firebaseToken.getEmail().isBlank()) {
+                    return userRepository.findByEmail(firebaseToken.getEmail())
+                        .map(existingUser -> {
+                            log.info("Linking firebaseUid={} to existing user email={}", firebaseUid, firebaseToken.getEmail());
+                            existingUser.setFirebaseUid(firebaseUid);
+                            return userRepository.save(existingUser);
+                        })
+                        .orElse(null);
+                }
+                return null;
             });
+
+        if (user == null) {
+            log.warn("No SafeOps user found for firebaseUid={} email={}", firebaseUid, firebaseToken.getEmail());
+            throw new FirebaseAuthenticationException(
+                "Account does not exist. Please register as an Admin or join with a referral code first."
+            );
+        }
 
         if (user.getStatus() == UserStatus.SUSPENDED) {
             throw new FirebaseAuthenticationException("Account is suspended. Please contact your organization administrator.");

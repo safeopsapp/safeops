@@ -46,6 +46,17 @@ class AuthRepositoryImpl(
         result
     }
 
+    override suspend fun loginWithGoogle(
+        googleIdToken: String,
+        selectedRole: Role
+    ): Result<AuthenticatedSession> = withContext(dispatchers.io) {
+        val result = remoteDataSource.authenticateWithGoogle(googleIdToken, selectedRole)
+        if (result is Result.Success) {
+            sessionLocalDataSource.saveSession(result.data)
+        }
+        result
+    }
+
     override suspend fun logout(): Result<Unit> = withContext(dispatchers.io) {
         sessionLocalDataSource.clearSession()
         Result.Success(Unit)

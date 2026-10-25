@@ -41,7 +41,7 @@ class PermitValidationEngineTest {
     fun `validate Lifting Work permit requires crane operator and license number`() {
         val liftingPermit = createValidPermit(PermitType.LIFTING).copy(
             personnel = PermitPersonnel(
-                siteEngineerName = "Vasanthan M",
+                siteEngineerName = "Marcus Vance",
                 siteEngineerContact = "+91 98765 43210",
                 liftingSupervisorName = "S. Murugan",
                 riggerSignalManName = "P. Kumar",
@@ -58,7 +58,7 @@ class PermitValidationEngineTest {
     fun `validate Piling Work permit requires rig operator and license number`() {
         val pilingPermit = createValidPermit(PermitType.PILING).copy(
             personnel = PermitPersonnel(
-                siteEngineerName = "Vasanthan M",
+                siteEngineerName = "Marcus Vance",
                 siteEngineerContact = "+91 98765 43210",
                 pilingSupervisorName = "M. Arumugam",
                 riggerSignalManName = "P. Kumar",
@@ -120,9 +120,9 @@ class PermitValidationEngineTest {
             permitType = type,
             header = PermitHeader(
                 permitNumber = "SPR-2026-000124",
-                workPerformedBy = "Sairam Civil Infrastructure Ltd",
+                workPerformedBy = "Apex Civil Infrastructure Ltd",
                 location = "Zone A - South Pier 14",
-                project = "Sairam Metro Line - Phase 2"
+                project = "Apex Metro Line - Phase 2"
             ),
             schedule = PermitSchedule(
                 workDate = "27 Sep 2026",
@@ -131,7 +131,7 @@ class PermitValidationEngineTest {
                 workerCount = 4
             ),
             personnel = PermitPersonnel(
-                siteEngineerName = "Vasanthan M",
+                siteEngineerName = "Marcus Vance",
                 siteEngineerContact = "+91 98765 43210",
                 liftingSupervisorName = "S. Murugan",
                 riggerSignalManName = "P. Kumar",

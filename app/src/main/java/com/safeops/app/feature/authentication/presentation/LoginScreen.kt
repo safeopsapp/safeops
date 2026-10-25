@@ -1,5 +1,7 @@
 package com.safeops.app.feature.authentication.presentation
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -50,6 +52,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role as SemanticsRole
@@ -60,6 +63,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.safeops.app.R
 import com.safeops.app.core.designsystem.component.SafeOpsAuthBackground
 import com.safeops.app.core.designsystem.component.SafeOpsButton
@@ -88,6 +94,40 @@ fun LoginScreen(
     val typography = SafeOpsTheme.typography
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
+
+    val webClientId = "597325401037-fn5ib7icouh81g9cq2lvli9hjo4uqrma.apps.googleusercontent.com"
+
+    val googleSignInClient = remember {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(webClientId)
+            .requestEmail()
+            .build()
+        GoogleSignIn.getClient(context, gso)
+    }
+
+    val googleLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val idToken = account?.idToken
+            if (idToken != null) {
+                viewModel.onEvent(LoginEvent.GoogleSignIn(idToken))
+            } else {
+                viewModel.onEvent(LoginEvent.GoogleSignInFailed("Google Sign-In did not return an ID token."))
+            }
+        } catch (e: ApiException) {
+            if (e.statusCode != 12501 && e.statusCode != 12502) {
+                viewModel.onEvent(
+                    LoginEvent.GoogleSignInFailed(
+                        "Google Sign-In failed (${e.statusCode}): ${e.localizedMessage ?: "Please try again."}"
+                    )
+                )
+            }
+        }
+    }
 
     LaunchedEffect(state.successSession) {
         state.successSession?.let { onLoginSuccess(it) }
@@ -300,7 +340,12 @@ fun LoginScreen(
                         isDark = colors.isDark,
                         border = colors.border,
                         textColor = colors.primaryText,
-                        onClick = { /* Google Sign-In */ }
+                        onClick = {
+                            focusManager.clearFocus()
+                            googleSignInClient.signOut().addOnCompleteListener {
+                                googleLauncher.launch(googleSignInClient.signInIntent)
+                            }
+                        }
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))

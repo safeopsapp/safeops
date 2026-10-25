@@ -57,9 +57,11 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
 
         } catch (FirebaseAuthenticationException e) {
             log.warn("Firebase authentication failed: {}", e.getMessage());
+            request.setAttribute("AUTH_ERROR_MSG", e.getMessage());
             // Continue without setting authentication - Spring Security will handle the 401
         } catch (Exception e) {
             log.error("Unexpected error during Firebase authentication", e);
+            request.setAttribute("AUTH_ERROR_MSG", "Authentication failed: " + e.getMessage());
         }
 
         filterChain.doFilter(request, response);

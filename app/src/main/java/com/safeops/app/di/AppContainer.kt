@@ -49,6 +49,7 @@ interface AppContainer {
     val registrationRepository: RegistrationRepository
     val validateCredentialsUseCase: ValidateCredentialsUseCase
     val loginUseCase: LoginUseCase
+    val loginWithGoogleUseCase: com.safeops.app.domain.usecase.LoginWithGoogleUseCase
     val getSessionUseCase: GetSessionUseCase
     val logoutUseCase: LogoutUseCase
     val resolveRoleNavigationUseCase: ResolveRoleNavigationUseCase
@@ -104,6 +105,10 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         LoginUseCase(authRepository, sessionRepository, validateCredentialsUseCase)
     }
 
+    override val loginWithGoogleUseCase: com.safeops.app.domain.usecase.LoginWithGoogleUseCase by lazy {
+        com.safeops.app.domain.usecase.LoginWithGoogleUseCase(authRepository, sessionRepository)
+    }
+
     override val getSessionUseCase: GetSessionUseCase by lazy {
         GetSessionUseCase(sessionRepository)
     }
@@ -124,6 +129,7 @@ class SafeOpsViewModelFactory(private val container: AppContainer) : ViewModelPr
             modelClass.isAssignableFrom(LoginViewModel::class.java) -> {
                 LoginViewModel(
                     loginUseCase = container.loginUseCase,
+                    loginWithGoogleUseCase = container.loginWithGoogleUseCase,
                     validateCredentialsUseCase = container.validateCredentialsUseCase,
                     userPreferencesDataSource = container.userPreferencesDataSource
                 ) as T

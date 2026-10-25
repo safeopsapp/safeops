@@ -316,7 +316,7 @@ fun ProjectsShell(
 
             ProjectSiteCard(
                 siteCode = "SITE-BLR-01",
-                siteName = "Sairam Metro Line 3 — Pier Corridor",
+                siteName = "Apex Metro Line 3 — Pier Corridor",
                 location = "Elevated Viaduct Span 14 to 28",
                 activeWorkers = 44,
                 activePermits = 5,
@@ -627,7 +627,7 @@ fun PermitsShell(
                             permitType = selectedType,
                             header = com.safeops.app.feature.permit.domain.model.PermitHeader(
                                 permitNumber = "SPR-2026-${(100..999).random()}",
-                                project = "Sairam Metro Line - Phase 2"
+                                project = "Apex Metro Line - Phase 2"
                             ),
                             createdByUserId = session.user.id,
                             createdByName = session.user.fullName

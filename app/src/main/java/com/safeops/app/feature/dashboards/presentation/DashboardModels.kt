@@ -81,22 +81,22 @@ data class PermitTypeCountMock(
 object DashboardMockData {
     val adminProfile = UserProfileMock(
         id = "ADM-001",
-        name = "Vasanthan M",
+        name = "Alex Morgan",
         roleTitle = "Admin",
-        initials = "VM",
+        initials = "AM",
         role = Role.ADMIN,
-        organization = "Sairam Construction Pvt Ltd",
+        organization = "Apex Infrastructure Ltd",
         project = "Chennai Metro Site",
         siteLocation = "Zone B • Main Corridor"
     )
 
     val engineerProfile = UserProfileMock(
         id = "ENG-104",
-        name = "Vasanthan M",
+        name = "Marcus Vance",
         roleTitle = "Engineer",
-        initials = "VM",
+        initials = "MV",
         role = Role.ENGINEER,
-        organization = "Sairam Construction Pvt Ltd",
+        organization = "Apex Infrastructure Ltd",
         project = "Chennai Metro Project",
         siteLocation = "Zone B • Building A - Level 3"
     )
@@ -107,7 +107,7 @@ object DashboardMockData {
         roleTitle = "Safety Officer",
         initials = "SS",
         role = Role.SAFETY_OFFICER,
-        organization = "Sairam Construction Pvt Ltd",
+        organization = "Apex Infrastructure Ltd",
         project = "Chennai Metro Project",
         siteLocation = "Building A • Level 3"
     )
@@ -118,7 +118,7 @@ object DashboardMockData {
         roleTitle = "Field Specialist",
         initials = "RK",
         role = Role.WORKER,
-        organization = "Sairam Construction Pvt Ltd",
+        organization = "Apex Infrastructure Ltd",
         project = "Chennai Metro Project",
         siteLocation = "Building A • Level 3"
     )

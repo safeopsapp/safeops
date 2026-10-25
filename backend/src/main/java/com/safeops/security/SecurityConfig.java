@@ -1,6 +1,7 @@
 package com.safeops.security;
 
 import com.safeops.auth.AuthService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -30,6 +31,17 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint((request, response, authEx) -> {
+                    response.setContentType("application/json");
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    String customMsg = (String) request.getAttribute("AUTH_ERROR_MSG");
+                    String message = (customMsg != null && !customMsg.isBlank())
+                        ? customMsg
+                        : "Account does not exist. Please register as an Admin or join with a referral code first.";
+                    response.getWriter().write(String.format("{\"success\":false,\"error\":\"UNAUTHORIZED\",\"message\":\"%s\"}", message));
+                })
+            )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/actuator/health",

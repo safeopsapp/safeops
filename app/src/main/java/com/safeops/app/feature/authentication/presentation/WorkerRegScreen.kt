@@ -332,7 +332,7 @@ private fun ReferralCodeStep(state: WorkerRegUiState, onEvent: (WorkerRegEvent) 
             SafeOpsTextField(
                 value = state.referralCode,
                 onValueChange = { onEvent(WorkerRegEvent.ReferralCodeChanged(it)) },
-                placeholder = "E.g. SAIRAMCON",
+                placeholder = "e.g. APEXINFRA",
                 leadingIcon = SafeOpsIcons.Key,
                 isError = state.referralCodeError != null,
                 keyboardOptions = KeyboardOptions(
