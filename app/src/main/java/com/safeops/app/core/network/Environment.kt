@@ -1,6 +1,30 @@
 package com.safeops.app.core.network
 
+import android.os.Build
 import com.safeops.app.BuildConfig
+
+internal fun resolveDevelopmentUrl(): String {
+    val isEmulator = try {
+        (Build.FINGERPRINT.startsWith("generic")
+                || Build.FINGERPRINT.startsWith("unknown")
+                || Build.MODEL.contains("google_sdk")
+                || Build.MODEL.contains("Emulator")
+                || Build.MODEL.contains("Android SDK built for x86")
+                || Build.MANUFACTURER.contains("Genymotion")
+                || Build.HARDWARE.contains("goldfish")
+                || Build.HARDWARE.contains("ranchu")
+                || Build.PRODUCT.contains("sdk_gphone"))
+    } catch (_: Throwable) {
+        false
+    }
+
+    return if (isEmulator) {
+        "http://10.0.2.2:8080/api/v1/"
+    } else {
+        // Physical device connected via USB (adb reverse tcp:8080 tcp:8080)
+        "http://127.0.0.1:8080/api/v1/"
+    }
+}
 
 /**
  * Environment configuration for SafeOps.
@@ -11,7 +35,7 @@ enum class SafeOpsEnvironment(
     val isLoggingEnabled: Boolean
 ) {
     DEVELOPMENT(
-        baseUrl = "http://10.0.2.2:8080/api/v1/",
+        baseUrl = resolveDevelopmentUrl(),
         isLoggingEnabled = true
     ),
     STAGING(

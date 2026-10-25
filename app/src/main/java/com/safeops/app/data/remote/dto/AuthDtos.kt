@@ -79,9 +79,12 @@ data class AdminRegistrationRequestDto(
 
 @Serializable
 data class AdminRegistrationResponseDto(
+    val customerId: String? = null,
     val organizationId: String? = null,
+    val orgId: String? = null,
     val organizationName: String? = null,
     val referralCode: String? = null,
+    val adminName: String? = null,
     val adminEmail: String? = null,
     val message: String? = null
 )

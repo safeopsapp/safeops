@@ -90,7 +90,7 @@ public class AuthService {
         if (user == null) {
             log.warn("No SafeOps user found for firebaseUid={} email={}", firebaseUid, firebaseToken.getEmail());
             throw new FirebaseAuthenticationException(
-                "Account does not exist. Please register as an Admin or join with a referral code first."
+                "User not registered in SafeOps. Please complete registration."
             );
         }
 

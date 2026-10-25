@@ -3,6 +3,7 @@ package com.safeops.app.data.repository
 import com.google.firebase.auth.FirebaseAuth
 import com.safeops.app.core.common.Result
 import com.safeops.app.core.error.ErrorMapper
+import com.safeops.app.core.error.SafeOpsError
 import com.safeops.app.core.utils.await
 import com.safeops.app.data.remote.SafeOpsApiClient
 import com.safeops.app.data.remote.dto.AdminRegistrationRequestDto
@@ -21,16 +22,28 @@ class RegistrationRepositoryImpl(
 ) : RegistrationRepository {
 
     override suspend fun registerAdmin(request: AdminRegistrationRequest): Result<AdminRegistrationResult> = withContext(Dispatchers.IO) {
+        val auth = firebaseAuthProvider()
+        val email = request.adminDetails.email.trim()
+        val password = request.adminDetails.password
+
+        val firebaseUser = try {
+            val authResult = auth.createUserWithEmailAndPassword(email, password).await()
+            authResult.user ?: throw IllegalStateException("Firebase user creation succeeded but user is null")
+        } catch (e: com.google.firebase.auth.FirebaseAuthUserCollisionException) {
+            // Email already in Firebase - try signing in with provided credentials to complete onboarding
+            try {
+                val signInResult = auth.signInWithEmailAndPassword(email, password).await()
+                signInResult.user ?: throw e
+            } catch (_: Exception) {
+                return@withContext Result.Error(
+                    SafeOpsError.ValidationError("email", "This email address is already registered. Please sign in or use a different email.")
+                )
+            }
+        } catch (e: Exception) {
+            return@withContext Result.Error(ErrorMapper.mapThrowable(e))
+        }
+
         try {
-            val auth = firebaseAuthProvider()
-            val authResult = auth.createUserWithEmailAndPassword(
-                request.adminDetails.email.trim(),
-                request.adminDetails.password
-            ).await()
-
-            val firebaseUser = authResult.user
-                ?: throw IllegalStateException("Firebase user creation succeeded but user is null")
-
             val tokenResult = firebaseUser.getIdToken(true).await()
             val idToken = tokenResult.token
                 ?: throw IllegalStateException("Failed to retrieve Firebase ID token after registration")
@@ -46,10 +59,10 @@ class RegistrationRepositoryImpl(
 
             Result.Success(
                 AdminRegistrationResult(
-                    orgId = response.organizationId ?: request.organizationDetails.organizationId,
+                    orgId = response.organizationId ?: response.orgId ?: request.organizationDetails.organizationId,
                     referralCode = response.referralCode ?: request.organizationDetails.organizationId,
                     organizationName = response.organizationName ?: request.organizationDetails.organizationName,
-                    adminName = request.adminDetails.fullName
+                    adminName = response.adminName ?: request.adminDetails.fullName
                 )
             )
         } catch (e: Exception) {
@@ -74,16 +87,27 @@ class RegistrationRepositoryImpl(
     }
 
     override suspend fun registerWorker(request: WorkerRegistrationRequest): Result<Unit> = withContext(Dispatchers.IO) {
+        val auth = firebaseAuthProvider()
+        val email = request.email.trim()
+        val password = request.password
+
+        val firebaseUser = try {
+            val authResult = auth.createUserWithEmailAndPassword(email, password).await()
+            authResult.user ?: throw IllegalStateException("Firebase user creation succeeded but user is null")
+        } catch (e: com.google.firebase.auth.FirebaseAuthUserCollisionException) {
+            try {
+                val signInResult = auth.signInWithEmailAndPassword(email, password).await()
+                signInResult.user ?: throw e
+            } catch (_: Exception) {
+                return@withContext Result.Error(
+                    SafeOpsError.ValidationError("email", "This email address is already registered. Please sign in or use a different email.")
+                )
+            }
+        } catch (e: Exception) {
+            return@withContext Result.Error(ErrorMapper.mapThrowable(e))
+        }
+
         try {
-            val auth = firebaseAuthProvider()
-            val authResult = auth.createUserWithEmailAndPassword(
-                request.email.trim(),
-                request.password
-            ).await()
-
-            val firebaseUser = authResult.user
-                ?: throw IllegalStateException("Firebase user creation succeeded but user is null")
-
             val tokenResult = firebaseUser.getIdToken(true).await()
             val idToken = tokenResult.token
                 ?: throw IllegalStateException("Failed to retrieve Firebase ID token after registration")
